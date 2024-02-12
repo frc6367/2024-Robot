@@ -10,21 +10,10 @@
 py -3 -m pip install -U robotpy[all]
 ```
 
-### Upgrade robotpy on the robot only on one laptop:
-
-Installing python (only needs to be done after reimaging)
-
 ```
-py -3 -m robotpy_installer download-python
-py -3 -m robotpy_installer install-python
-```
+## sync command to dowload locally things in the pyproject.toml
+py -m robotpy sync
 
-Upgrading RobotPy packages (periodically)
-
-```
-py -3 -m robotpy_installer download robotpy[all]
-py -3 -m robotpy_installer install robotpy[all]
-```
 
 
 ## Useful command line things
@@ -32,11 +21,11 @@ py -3 -m robotpy_installer install robotpy[all]
 ```
 dir
 ```
-```py -3 robot.py sim
+```py -m robotpy sim
 
 ```
 ```
-py -3 robot.py deploy
+py -m robotpy deploy
 
 ```
  

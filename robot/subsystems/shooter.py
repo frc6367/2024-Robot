@@ -1,12 +1,13 @@
 import magicbot 
 import rev
 import wpilib
-import ctre
+import phoenix5
+
 from misc.led_controller import LEDController
 
 class Shooter: 
-    left_motor: ctre.WPI_TalonSRX
-    right_motor: ctre.WPI_TalonSRX
+    left_motor: phoenix5.WPI_VictorSPX
+    right_motor: phoenix5.WPI_VictorSPX
     indexer_motor: rev.CANSparkMax
     led: LEDController
     

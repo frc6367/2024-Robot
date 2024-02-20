@@ -1,13 +1,13 @@
 import wpilib.drive
-import ctre
+import phoenix5
 import magicbot
 
 
 class DriveTrain:
-    drive_l1: ctre.WPI_TalonSRX
-    drive_l2: ctre.WPI_TalonSRX
-    drive_r1: ctre.WPI_TalonSRX
-    drive_r2: ctre.WPI_TalonSRX
+    drive_l1: phoenix5.WPI_VictorSPX
+    drive_l2: phoenix5.WPI_VictorSPX
+    drive_r1: phoenix5.WPI_VictorSPX
+    drive_r2: phoenix5.WPI_VictorSPX
 
     speed = magicbot.will_reset_to(0)
     rotation = magicbot.will_reset_to(0)

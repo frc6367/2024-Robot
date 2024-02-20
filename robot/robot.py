@@ -2,9 +2,8 @@ import wpilib
 import magicbot
 import phoenix5
 
-import ctre
-import navx
-# import rev
+# import navx
+import rev
 
 from misc.led_controller import LEDController
 
@@ -42,8 +41,8 @@ class MyRobot(wpilib.TimedRobot):
         self.back_motor = phoenix5.WPI_VictorSPX(8)
 
         ## shooter 
-        self.left_motor = ctre.WPI_TalonSRX(5)
-        self.right_motor = ctre.WPI_TalonSRX(6)
+        self.left_motor = phoenix5.WPI_VictorSPX(5)
+        self.right_motor = phoenix5.WPI_VictorSPX(6)
 
         ## index 
         self.indexer_motor = CANSparkMax(9, CANSparkMax.MotorType.kBrushless)

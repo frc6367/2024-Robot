@@ -14,7 +14,8 @@ py -3 -m pip install -U robotpy[all]
 ## sync command to dowload locally things in the pyproject.toml
 py -m robotpy sync
 
-
+## to install the py tommal 
+ py -m robotpy init      
 
 ## Useful command line things
 

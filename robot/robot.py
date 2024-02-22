@@ -83,11 +83,12 @@ class MyRobot(wpilib.TimedRobot):
         #     -self.stick0.getY(),
         #     -self.stick0.getTwist()n
         # )
-    
-
+     
+        ## grabs the node 
+        if self.stick0.getRawButton(5):
+            self.intake.grab()
         ## moves indexer up when node taken from ground 
         if self.stick0.getRawButton(6):
-            self.intake.grab()
             self.shooter.postioning_up()
 
         ##moves the indexer down when node taken from source 

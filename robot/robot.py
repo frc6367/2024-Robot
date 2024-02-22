@@ -85,42 +85,26 @@ class MyRobot(wpilib.TimedRobot):
         # )
     
 
-        ## grabs the node into the robot 
+        ## moves indexer up when node taken from ground 
         if self.stick0.getRawButton(6):
             self.intake.grab()
             self.shooter.postioning_up()
 
-        ## shoots the node 
+        ##moves the indexer down when node taken from source 
         if self.stick0.getRawButton(7):
-            self.shooter.shoot()
-
-        ##postions the node when the robot collects the node from the source 
-        if self.stick0.getRawButton(11):
             self.shooter.postioning_down()
 
-        #extends the 
-        if self.stick0.getRawButton(12):
-            pass
+        ## shoots the node 
+        if self.stick0.getRawButton(8):
+            self.shooter.shoot()
 
-
-
-
-
-
-
-
-
-
-
-        # if self.stick0.getTrigger():
-        #     self.front_motor.set(self.stick0.getRawAxis(3))
-        # else:
-        #     self.front_motor.set(0)
-        
-        # if self.stick1.getTrigger():
-        #     self.back_motor.set(self.stick1.getRawAxis(3))
-        # else:
-        #     self.back_motor.set(0)
+        #extends the right arm of the climber
+        if self.stick0.getRawButton(9):
+            self.climber.right_climb()
+            
+        #retracts the right arm of the climber
+        if self.stick0.getRawButton(10):
+            self.climber.right_retracting()
 
 
         

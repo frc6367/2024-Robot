@@ -12,9 +12,9 @@ class Shooter:
     # led: LEDController
     # sensor: unknown 
     
-    shoot_speed = magicbot.tunable(0.2)
+    shoot_speed = magicbot.tunable(0.5)
     
-    pulling_in_speed = magicbot.tunable(-0.2)
+    pulling_in_speed = magicbot.tunable(-0.1)
     indexer_down_pos_speed = magicbot.tunable(-0.2)
     indexer_up_pos_speed = magicbot.tunable(0.4)
 
@@ -43,8 +43,8 @@ class Shooter:
     ##when the node comes from the source and needs to be moved lower  
         ##speed = neg to run motors backwards 
     def postioning_down(self):
-        self.right_motor = self.pulling_in_speed
-        self.left_motor = self.pulling_in_speed
+        # self.right_motor = self.pulling_in_speed
+        # self.left_motor = self.pulling_in_speed
         self.indexer_motor =  self.indexer_down_pos_speed
 
     def execute(self):

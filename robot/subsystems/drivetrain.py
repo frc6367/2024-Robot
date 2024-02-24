@@ -4,10 +4,10 @@ import magicbot
 
 
 class DriveTrain:
-    drive_l1: phoenix5.WPI_VictorSPX
-    drive_l2: phoenix5.WPI_VictorSPX
-    drive_r1: phoenix5.WPI_VictorSPX
-    drive_r2: phoenix5.WPI_VictorSPX
+    drive_l1: phoenix5.WPI_TalonSRX
+    drive_l2: phoenix5.WPI_TalonSRX
+    drive_r1: phoenix5.WPI_TalonSRX
+    drive_r2: phoenix5.WPI_TalonSRX
 
     speed = magicbot.will_reset_to(0)
     rotation = magicbot.will_reset_to(0)

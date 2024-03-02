@@ -33,9 +33,12 @@ class MyRobot(wpilib.TimedRobot):
             11, rev.CANSparkMax.MotorType.kBrushless
         )
 
+        self.climber_left_sensor = wpilib.DigitalInput(4)
+
     def robotPeriodic(self) -> None:
         wpilib.SmartDashboard.putNumber("lower", self.lower_sensor.getDistance())
         wpilib.SmartDashboard.putNumber("middle", self.middle_sensor.getDistance())
+        wpilib.SmartDashboard.putBoolean("sensor", self.climber_left_sensor.get())
 
     def teleopPeriodic(self):
 

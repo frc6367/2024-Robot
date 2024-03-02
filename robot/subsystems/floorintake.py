@@ -24,12 +24,12 @@ class FloorIntake:
 
     indexer: Indexer
 
-    green_motor:phoenix5.WPI_TalonSRX
-    black_motor:phoenix5.WPI_TalonSRX
+    green_motor: phoenix5.WPI_TalonSRX
+    black_motor: phoenix5.WPI_TalonSRX
     # sensor: unknown
 
     black_grab_speed = magicbot.tunable(0.4)
-    green_grab_speed = magicbot.tunable(0.2)
+    green_grab_speed = magicbot.tunable(0.8)
 
     action = magicbot.will_reset_to(Action.NONE)
 
@@ -49,20 +49,18 @@ class FloorIntake:
 
     def execute(self):
 
-        ## front motor runs faster than the back motor
-        ## the motor should stop moving when sensor senses node
+        bspeed = 0
+        gspeed = 0
 
         if self.action == Action.GRAB:
-            bspeed = self.black_grab_speed
-            gspeed = self.green_grab_speed
-            self.indexer.floorIntake()
+            if self.indexer.floorIntake():
+                bspeed = self.black_grab_speed
+                gspeed = self.green_grab_speed
 
         elif self.action == Action.REVERSE:
             bspeed = -self.black_grab_speed
             gspeed = -self.green_grab_speed
-        else:
-            bspeed = 0
-            gspeed = 0
+            self.indexer.reverse()
 
         self.black_motor.set(bspeed)
         self.green_motor.set(gspeed)

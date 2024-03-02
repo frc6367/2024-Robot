@@ -67,3 +67,4 @@ class Indexer:
 
     def execute(self):
         self.motor.set(self.speed)
+

@@ -8,14 +8,14 @@ import phoenix5
 
 # import navx
 import rev
-from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A41
+from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
 from wpimath.filter import SlewRateLimiter
 
 # from misc.led_controller import LEDController
 
 from subsystems.climber import Climber
 from subsystems.drivetrain import DriveTrain
-from robot.subsystems.floorintake import FloorIntake
+from subsystems.floorintake import FloorIntake
 from subsystems.shooter import Shooter
 from subsystems.indexer import Indexer
 
@@ -60,8 +60,11 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_r2.setInverted(True)
 
         ## floor intake
-        self.floorintake_front_motor = phoenix5.WPI_TalonSRX(7)
-        self.floorintake_back_motor = phoenix5.WPI_TalonSRX(8)
+        # self.floorintake_front_motor = phoenix5.WPI_TalonSRX(7)
+        # self.floorintake_back_motor = phoenix5.WPI_TalonSRX(8)
+
+        self.green_motor = phoenix5.WPI_TalonSRX(7)
+        self.black_motor = phoenix5.WPI_TalonSRX(8)
 
         ## shooter
         self.shooter_left_motor = phoenix5.WPI_VictorSPX(5)
@@ -69,8 +72,8 @@ class MyRobot(magicbot.MagicRobot):
 
         ## indexer
         self.indexer_motor = rev.CANSparkMax(9, rev.CANSparkMax.MotorType.kBrushless)
-        self.indexer_upper_sensor = SharpIR2Y0A41(0)
-        self.indexer_lower_sensor = SharpIR2Y0A41(1)
+        self.indexer_upper_sensor = SharpIR2Y0A21(0)
+        self.indexer_lower_sensor = SharpIR2Y0A21(1)
 
         ## climber
         self.climber_right_motor = rev.CANSparkMax(
@@ -87,22 +90,19 @@ class MyRobot(magicbot.MagicRobot):
         #     -self.stick0.getY(),
         #     -self.stick0.getTwist()n
         # )
+        self.drivetrain.move(-self.stick0.getY(), -self.stick0.getTwist())
 
         ## grabs the node
         if self.stick0.getRawButton(5):
             self.floorintake.grab()
-        ## moves indexer up when node taken from ground
-        if self.stick0.getRawButton(6):
-            self.shooter.postioning_up()
 
-        ##moves the indexer down when node taken from source
-        if self.stick0.getRawButton(7):
-            self.shooter.postioning_down()
+        ## grabs node from source
+        if self.stick0.getRawButton(6):
+            self.shooter.sourceIntake()
 
         ## shoots the node
-        if self.stick0.getRawButton(8):
+        if self.stick0.getRawButton(7):
             self.shooter.shoot()
-
         # extends the right arm of the climber
         if self.stick0.getRawButton(9):
             self.climber.right_climb()

@@ -24,8 +24,8 @@ class FloorIntake:
 
     indexer: Indexer
 
-    green_motor: phoenix5.WPI_TalonSRX
-    black_motor: phoenix5.WPI_TalonSRX
+    green_motor:phoenix5.WPI_TalonSRX
+    black_motor:phoenix5.WPI_TalonSRX
     # sensor: unknown
 
     black_grab_speed = magicbot.tunable(0.4)

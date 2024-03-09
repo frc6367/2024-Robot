@@ -44,7 +44,7 @@ class Shooter:
     action = magicbot.will_reset_to(Action.NONE)
 
     timer = wpilib.Timer()
-    delay = magicbot.tunable(0.5)
+    delay = magicbot.tunable(0.8)
 
     def __init__(self):
         self.is_shooting = False

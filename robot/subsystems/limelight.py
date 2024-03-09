@@ -59,16 +59,16 @@ class AmpShoot:
             heading_error = self.tx
             steering_adjust = self.kp * self.tx
             self.drivetrain.move(self.speed,steering_adjust)
-        elif self.action == Action.SHOOT:
-            if not self.switch:
-                self.switch = True
-                self.timer.reset()
-                self.timer.start()
+        # elif self.action == Action.SHOOT:
+        #     if not self.switch:
+        #         self.switch = True
+        #         self.timer.reset()
+        #         self.timer.start()
 
-            if self.timer.get() > self.delay:
-                self.shooter.shoot()
-        else: 
-            self.is_shooting = False
+        #     if self.timer.get() > self.delay:
+        #         self.shooter.shoot()
+        # else: 
+        #     self.is_shooting = False
 
 
 

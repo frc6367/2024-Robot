@@ -1,13 +1,19 @@
 import wpilib.drive
 import phoenix5
 import magicbot
+from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
+import wpilib
 
 
 class DriveTrain:
+    sensor: SharpIR2Y0A21
     drive_l1: phoenix5.WPI_TalonSRX
     drive_l2: phoenix5.WPI_TalonSRX
     drive_r1: phoenix5.WPI_TalonSRX
     drive_r2: phoenix5.WPI_TalonSRX
+
+    encoder_l: wpilib.Encoder
+    encorder_r: wpilib.Encoder
 
     speed = magicbot.will_reset_to(0)
     rotation = magicbot.will_reset_to(0)
@@ -47,6 +53,28 @@ class DriveTrain:
     def rotate(self, rotation: float):
         self.rotation = rotation
 
+    # @magicbot.feedback
+    # def distance(self):
+    #     return self.sensor.getDistance()
+
+    # @magicbot.feedback
+    # def isObjectSensed(self):
+    #     return self.distance() <= 70
+
+    # heading_error = self.tx
+    # steering_adjust = self.kp * self.tx
+    # self.drivetrain.move(self.speed,steering_adjust)
+
+    ##adjust the forawrd and back speed of the robot based on thew error
+
+    # @magicbot.feedback
+    def right_pos(self):
+        pass
+
+    def backAlign(self):
+        self.doBackAlign = True
+        pass
+
     def execute(self):
         if self.tank:
             self.drive.tankDrive(self.l, self.r)
@@ -58,3 +86,6 @@ class DriveTrain:
             self.drive.arcadeDrive(
                 self.speed * self.limit, self.rotation * self.limit, False
             )
+
+        # if self.doBackAlign == True:
+        #     self.move(-0.3,0)

@@ -1,5 +1,7 @@
 import wpilib
 import wpilib.drive
+import constants
+from ntcore.util import ntproperty
 
 # from misc.ejoystick import EnhancedJoystick
 
@@ -39,7 +41,10 @@ def map_range(x, a, b, c, d):
 
 
 def twitch_range(y):
-    return map_range(y, -1.0, 1.0, 0.5, 0.25)
+    return map_range(y, -1.0, 1.0, 0.8, 0.25)
+
+
+CLIMB_WITH_JOYSTICK = False
 
 
 class MyRobot(magicbot.MagicRobot):
@@ -54,6 +59,16 @@ class MyRobot(magicbot.MagicRobot):
     # # The channel on the driver station that the joystick is connected to
     kJoystickChannel0 = 0
     kJoystickChannel1 = 1
+
+    ll_led = ntproperty("/limelight/ledMode", 0.0)
+
+    @magicbot.feedback
+    def encoder_l_d(self):
+        return self.encoder_l.getDistance()
+
+    @magicbot.feedback
+    def encoder_r_d(self):
+        return self.encoder_r.getDistance()
 
     def createObjects(self):
         # Joysticks
@@ -71,6 +86,15 @@ class MyRobot(magicbot.MagicRobot):
 
         self.drive_r1.setInverted(True)
         self.drive_r2.setInverted(True)
+
+        self.drivetrain_sensor = SharpIR2Y0A21(2)
+
+        ### make sure to check the numbers for the encoders are correct
+        self.encoder_l = wpilib.Encoder(0, 1)
+        self.encoder_r = wpilib.Encoder(2, 3)
+        self.encoder_l.setDistancePerPulse(constants.kDistancePerPulse)
+        self.encoder_r.setDistancePerPulse(constants.kDistancePerPulse)
+        self.encoder_r.setReverseDirection(True)
 
         ## floor intake
         self.green_motor = phoenix5.WPI_TalonSRX(7)
@@ -94,8 +118,11 @@ class MyRobot(magicbot.MagicRobot):
         self.left_climber_motor = rev.CANSparkMax(
             11, rev.CANSparkMax.MotorType.kBrushless
         )
-        self.left_climber_motor.setInverted(False)
-        self.right_climber_motor.setInverted(True)
+        self.left_climber_motor.setInverted(True)
+        self.right_climber_motor.setInverted(False)
+
+        self.left_climber_motor.setIdleMode(rev.CANSparkMax.IdleMode.kBrake)
+        self.right_climber_motor.setIdleMode(rev.CANSparkMax.IdleMode.kBrake)
 
         self.right_climber_sensor = wpilib.DigitalInput(4)
         self.left_climber_sensor = wpilib.DigitalInput(5)
@@ -104,10 +131,10 @@ class MyRobot(magicbot.MagicRobot):
         # # Use the joystick X axis for lateral movement, Y axis for forward
         twitch = twitch_range(self.stick.getRawAxis(3))
 
-        speed1 = -self.stick.getEnhY()
-        speed = self.speed_limiter.calculate(speed1)
+        speed = -self.stick.getEnhY()
+        # speed = self.speed_limiter.calculate(speed)
         rotation = -self.stick.getEnhTwist() * abs(twitch)
-        rotation = self.twist_limiter.calculate(rotation)
+        # rotation = self.twist_limiter.calculate(rotation)
 
         self.drivetrain.move(speed, rotation)
 
@@ -128,16 +155,33 @@ class MyRobot(magicbot.MagicRobot):
             self.shooter.shoot()
 
         ## shoots the amp
-        if self.stick.getRawButton(11):
+        if self.stick.getRawButton(9):
             self.shooter.shootAmp()
 
-        # Joystick based climber
-        if True:
+        if CLIMB_WITH_JOYSTICK:
+            # Joystick based climber
             cy = self.climb_stick.getY()
             if self.climb_stick.getRawButton(11):
                 self.left_climber.direct(cy)
             if self.climb_stick.getRawButton(12):
                 self.right_climber.direct(-cy)
+        else:
+            ## left side
+            if self.climb_stick.getRawButton(5):
+                speed = self.climb_stick.getRawAxis(1)
+                self.left_climber.direct(speed)
+
+            ## right side
+            if self.climb_stick.getRawButton(6):
+                speed2 = self.climb_stick.getRawAxis(3)
+                self.right_climber.direct(speed2)
+
+    def robotPeriodic(self):
+        super().robotPeriodic()
+        if self.indexer.is_note_present():
+            self.ll_led = 3
+        else:
+            self.ll_led = 1
 
         # extends the right arm of the climber
         # if self.stick.getRawButton(9):

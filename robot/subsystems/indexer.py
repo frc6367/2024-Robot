@@ -26,7 +26,7 @@ class Indexer:
     upper_sensor: SharpIR2Y0A21
     lower_sensor: SharpIR2Y0A21
 
-    floorintake_speed = magicbot.tunable(0.4)
+    floorintake_speed = magicbot.tunable(0.35)
     sourceintake_speed = magicbot.tunable(-0.2)
     shooting_speed = magicbot.tunable(1.0)
     reverse_speed = magicbot.tunable(-0.2)

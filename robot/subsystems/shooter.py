@@ -79,6 +79,8 @@ class Shooter:
                 self.timer.start()
             if self.timer.get() > self.delay:
                 self.indexer.shooting()
+            else:
+                self.indexer.shootBack()
 
         elif self.action == Action.SHOOTAMP:
             zspeed = self.shoot_amp_speed
@@ -95,3 +97,5 @@ class Shooter:
 
         self.left_motor.set(zspeed)
         self.right_motor.set(-zspeed)
+
+        wpilib.SmartDashboard.putNumber("zspeed", zspeed)

@@ -3,6 +3,8 @@ import wpilib.drive
 import constants
 from ntcore.util import ntproperty
 
+import math
+
 # from misc.ejoystick import EnhancedJoystick
 
 import magicbot
@@ -41,7 +43,11 @@ def map_range(x, a, b, c, d):
 
 
 def twitch_range(y):
-    return map_range(y, -1.0, 1.0, 0.8, 0.25)
+    return map_range(y, -1.0, 1.0, 0.9, 0.25)
+
+
+def squared(v):
+    return math.copysign(v * v, v)
 
 
 CLIMB_WITH_JOYSTICK = False
@@ -131,10 +137,12 @@ class MyRobot(magicbot.MagicRobot):
         # # Use the joystick X axis for lateral movement, Y axis for forward
         twitch = twitch_range(self.stick.getRawAxis(3))
 
-        speed = -self.stick.getEnhY()
-        # speed = self.speed_limiter.calculate(speed)
-        rotation = -self.stick.getEnhTwist() * abs(twitch)
-        # rotation = self.twist_limiter.calculate(rotation)
+        if False:
+            speed = -self.stick.getEnhY()
+            rotation = -self.stick.getEnhTwist() * abs(twitch)
+        else:
+            speed = -squared(self.stick.getY())
+            rotation = -squared(self.stick.getZ()) * abs(twitch)
 
         self.drivetrain.move(speed, rotation)
 

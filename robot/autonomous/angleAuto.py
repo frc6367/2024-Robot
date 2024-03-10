@@ -38,7 +38,7 @@ class AngleBase(AutonomousStateMachine):
     def shoot(self):
         self.shooter.shoot()
 
-    @timed_state(duration=4)
+    @timed_state(duration=5)
     def goback(self):
         self.drivetrain.move(-0.3, -0.3 * self.direction)
 

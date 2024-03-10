@@ -13,7 +13,7 @@ class DriveTrain:
     drive_r2: phoenix5.WPI_TalonSRX
 
     encoder_l: wpilib.Encoder
-    encorder_r: wpilib.Encoder
+    encoder_r: wpilib.Encoder
 
     speed = magicbot.will_reset_to(0)
     rotation = magicbot.will_reset_to(0)

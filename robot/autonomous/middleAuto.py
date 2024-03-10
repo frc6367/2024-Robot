@@ -21,7 +21,7 @@ class Middle(AutonomousStateMachine):
     ## sensor needs to be added for robot to be the right distance away from the speaker
     ## back up first 2ft 4 in(make sure right distance with sensor), and then shoot
 
-    @timed_state(first=True, duration=1.75, next_state="shoot")
+    @timed_state(first=True, duration=1, next_state="shoot")
     def initial_back(self):
         self.drivetrain.move(-0.2, 0)
 

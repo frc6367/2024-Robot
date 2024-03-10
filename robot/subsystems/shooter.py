@@ -45,7 +45,7 @@ class Shooter:
 
     timer = wpilib.Timer()
     delay = magicbot.tunable(0.8)
-    force_shoot = magicbot.tunable(2)
+    force_shoot = magicbot.tunable(1)
 
     def __init__(self):
         self.is_shooting = False
@@ -67,9 +67,14 @@ class Shooter:
         zspeed = 0
 
         tm = self.timer.get()
-        if self.is_shooting == True and self.delay > tm and self.delay + self.force_shoot < tm:
+        # if (
+        #     self.is_shooting == True
+        #     and tm > self.delay
+        #     and self.delay + self.force_shoot > tm
+        # ):
+        #     self.action = Action.SHOOT
+        if self.is_shooting and tm < self.delay + self.force_shoot:
             self.action = Action.SHOOT
-
 
         if self.action == Action.SOURCE:
             self.is_shooting = False
@@ -105,5 +110,3 @@ class Shooter:
 
         self.left_motor.set(zspeed)
         self.right_motor.set(-zspeed)
-
-        wpilib.SmartDashboard.putNumber("zspeed", zspeed)

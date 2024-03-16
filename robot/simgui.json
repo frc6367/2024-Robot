@@ -25,6 +25,30 @@
       }
     }
   },
+  "NetworkTables": {
+    "retained": {
+      "SmartDashboard": {
+        "Autonomous Mode": {
+          "open": true
+        },
+        "open": true
+      }
+    },
+    "transitory": {
+      "LiveWindow": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      },
+      "limelight": {
+        "open": true
+      },
+      "robot": {
+        "open": true
+      }
+    }
+  },
   "NetworkTables Info": {
     "Server": {
       "open": true

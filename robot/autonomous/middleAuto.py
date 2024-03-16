@@ -23,7 +23,10 @@ class Middle(AutonomousStateMachine):
 
     @timed_state(first=True, duration=1, next_state="shoot")
     def initial_back(self):
-        self.drivetrain.move(-0.2, 0)
+        #self.drivetrain.move(-0.2, 0)
+        self.drivetrain.backAlign()
+        if self.drivetrain.isAligned():
+            self.next_state(self.shoot)
 
     @timed_state(duration=2, next_state="goback")
     def shoot(self):
@@ -41,9 +44,12 @@ class Middle(AutonomousStateMachine):
     def goForward(self):
         self.drivetrain.move(0.3, 0)
 
-    @timed_state(duration=0.7, next_state="shoot2")
+    @timed_state(duration=2, next_state="shoot2")
     def go_back_again(self):
-        self.drivetrain.move(-0.2, 0)
+        # self.drivetrain.move(-0.2, 0)
+        self.drivetrain.backAlign()
+        if self.drivetrain.isAligned():
+            self.next_state(self.shoot2)
 
     @timed_state(duration=2)
     def shoot2(self):

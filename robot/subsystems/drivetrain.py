@@ -3,6 +3,8 @@ import phoenix5
 import magicbot
 from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
 import wpilib
+from wpilib import Timer
+
 
 
 class DriveTrain:
@@ -26,12 +28,26 @@ class DriveTrain:
     lv = magicbot.will_reset_to(0.0)
     rv = magicbot.will_reset_to(0.0)
     volts = magicbot.will_reset_to(False)
+    
+    offset = magicbot.tunable(-0.4)
+    maxOutput = magicbot.tunable(0.4)
+
+    wantTo = magicbot.will_reset_to(False)
+    kP = magicbot.tunable(1)
+    iLimit = 1
+
+    setpoint = 0
+    errorSum = 0
+    lastTimestamp = 0
+    lastError = 0
 
     def setup(self):
         self.drive_l2.follow(self.drive_l1)
         self.drive_r2.follow(self.drive_r1)
 
         self.drive = wpilib.drive.DifferentialDrive(self.drive_l1, self.drive_r1)
+
+        self.doingIt = False 
 
     def limit_speed(self):
         self.limit = 0.25
@@ -65,17 +81,47 @@ class DriveTrain:
     # steering_adjust = self.kp * self.tx
     # self.drivetrain.move(self.speed,steering_adjust)
 
-    ##adjust the forawrd and back speed of the robot based on thew error
+    ##adjust the forawrd and back speed of the robot based on the error
+
+    #@magicbot.feedback
+        
 
     # @magicbot.feedback
-    def right_pos(self):
-        pass
+    # def right_pos(self):
+    #     pass
 
     def backAlign(self):
-        self.doBackAlign = True
-        pass
+        self.wantTo = True
+
+    def isAligned(self):
+        return self.doingIt and abs(self.lastError) < 0.1
+    #0.4
+    ## only the right encoder works 
+        
+    #wpilib.SmartDashboard.putNumber("lower", self.lower_sensor.getDistance())
 
     def execute(self):
+        if self.wantTo == False:
+            self.doingIt = False
+        else:
+            sensorPosition = self.encoder_r.getDistance()
+            if self.doingIt == False:
+                self.doingIt = True
+                self.startPos = sensorPosition
+            
+            setpoint = self.startPos + self.offset
+            error = setpoint - sensorPosition
+           
+            self.lastError = error
+            outputSpeed = self.kP * error
+
+            if outputSpeed > self.maxOutput:
+                outputSpeed = self.maxOutput
+            elif outputSpeed < -self.maxOutput: 
+                outputSpeed = -self.maxOutput
+
+            self.tank_drive(outputSpeed,outputSpeed)
+
         if self.tank:
             self.drive.tankDrive(self.l, self.r)
         elif self.volts:
@@ -87,5 +133,3 @@ class DriveTrain:
                 self.speed * self.limit, self.rotation * self.limit, False
             )
 
-        # if self.doBackAlign == True:
-        #     self.move(-0.3,0)

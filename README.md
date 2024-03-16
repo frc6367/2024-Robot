@@ -29,4 +29,7 @@ dir
 py -m robotpy deploy
 
 ```
+
+## How install useful packages 
+ py -m pip install [Name of the package you want to install(do not add brackets)]
  

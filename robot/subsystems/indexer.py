@@ -29,7 +29,7 @@ class Indexer:
     floorintake_speed = magicbot.tunable(0.35)
     sourceintake_speed = magicbot.tunable(-0.2)
     shooting_speed = magicbot.tunable(1.0)
-    shootBack_speed = magicbot.tunable(-0.2)
+    shootBack_speed = magicbot.tunable(-0.1)
     reverse_speed = magicbot.tunable(-0.2)
 
     speed = magicbot.will_reset_to(0)

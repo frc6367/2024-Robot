@@ -47,6 +47,10 @@ class Indexer:
             return True
 
         return False
+    
+    def is_lower_note_present(self):
+        return self.lower_sensor.getDistance() < 20
+
 
     #
     # Actions methods

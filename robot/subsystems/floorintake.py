@@ -33,12 +33,20 @@ class FloorIntake:
 
     action = magicbot.will_reset_to(Action.NONE)
 
+    def setup(self):
+        self.timer = wpilib.Timer()
+        self.continue_grab = False
+        self.continuing_grab = False
+
+        self.last_action = Action.NONE
+
     #
     # Action methods
     #
 
-    def grab(self):
+    def grab(self, continue_grab: bool = False):
         self.action = Action.GRAB
+        self.continue_grab = continue_grab
 
     def reverse(self):
         self.action = Action.REVERSE
@@ -52,6 +60,20 @@ class FloorIntake:
         bspeed = 0
         gspeed = 0
 
+        if self.action == Action.NONE:
+            if self.continue_grab and self.last_action != self.action:
+                self.timer.restart()
+                self.continue_grab = False
+                self.continuing_grab = True
+
+            if self.continuing_grab:
+                if self.timer.get() < 2:
+                    self.action = Action.GRAB
+                else:
+                    self.continuing_grab = False
+        else:
+            self.continuing_grab = False
+
         if self.action == Action.GRAB:
             if self.indexer.floorIntake():
                 bspeed = self.black_grab_speed
@@ -61,6 +83,8 @@ class FloorIntake:
             bspeed = -self.black_grab_speed
             gspeed = -self.green_grab_speed
             self.indexer.reverse()
+            self.continue_grab = False
 
         self.black_motor.set(bspeed)
         self.green_motor.set(gspeed)
+        self.last_action = self.action

@@ -166,6 +166,15 @@ class MyRobot(magicbot.MagicRobot):
         if self.stick.getRawButton(9):
             self.shooter.shootAmp()
 
+        if self.stick.getRawButton(8):
+            self.drivetrain.backAlign()
+            if self.drivetrain.isAligned():
+                self.shooter.shoot()
+
+        if self.climb_stick.getRawButton(1):
+            if self.drivetrain.noteAlign():
+                self.floorintake.grab(True)
+
         if CLIMB_WITH_JOYSTICK:
             # Joystick based climber
             cy = self.climb_stick.getY()
@@ -190,11 +199,3 @@ class MyRobot(magicbot.MagicRobot):
             self.ll_led = 3
         else:
             self.ll_led = 1
-
-        # extends the right arm of the climber
-        # if self.stick.getRawButton(9):
-        #     self.climber.right_climb()
-
-        # # retracts the right arm of the climber
-        # if self.stick.getRawButton(10):
-        #     self.climber.right_retracting()

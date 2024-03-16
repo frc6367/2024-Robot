@@ -1,6 +1,7 @@
 import wpilib.drive
 import phoenix5
 import magicbot
+import navx
 from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
 import wpilib
 from wpilib import Timer
@@ -13,9 +14,6 @@ class DriveTrain:
     drive_l2: phoenix5.WPI_TalonSRX
     drive_r1: phoenix5.WPI_TalonSRX
     drive_r2: phoenix5.WPI_TalonSRX
-
-    encoder_l: wpilib.Encoder
-    encoder_r: wpilib.Encoder
 
     speed = magicbot.will_reset_to(0)
     rotation = magicbot.will_reset_to(0)
@@ -30,22 +28,10 @@ class DriveTrain:
     rv = magicbot.will_reset_to(0.0)
     volts = magicbot.will_reset_to(False)
 
-    offset = magicbot.tunable(-0.4)
-    maxOutput = magicbot.tunable(0.5)
-
-    wantTo = magicbot.will_reset_to(False)
-    kP = magicbot.tunable(3.0)
-    iLimit = 1
-
     tx = ntproperty("/limelight/tx", 0.0)
     tclass = ntproperty("/limelight/tclass", "")
     kpturn = magicbot.tunable(-0.1)
     maxAdjustment = magicbot.tunable(0.3)
-
-    setpoint = 0
-    errorSum = 0
-    lastTimestamp = 0
-    lastError = 0
 
     def setup(self):
         self.drive_l2.follow(self.drive_l1)
@@ -75,13 +61,6 @@ class DriveTrain:
     def rotate(self, rotation: float):
         self.rotation = rotation
 
-    def backAlign(self):
-        self.wantTo = True
-
-    @magicbot.feedback
-    def isAligned(self):
-        return self.doingIt and abs(self.lastError) < 0.05
-
     def noteAlign(self):
         if self.tclass == "note":
             steering_adjust = self.kpturn * self.tx
@@ -95,32 +74,14 @@ class DriveTrain:
         else:
             return False
 
-    # 0.4
-    ## only the right encoder works
+        # 0.4
+        ## only the right encoder works
 
-    # wpilib.SmartDashboard.putNumber("lower", self.lower_sensor.getDistance())
+        # wpilib.SmartDashboard.putNumber("lower", self.lower_sensor.getDistance())
+
+        return outputSpeed, doingIt
 
     def execute(self):
-        if self.wantTo == False:
-            self.doingIt = False
-        else:
-            sensorPosition = self.encoder_r.getDistance()
-            if self.doingIt == False:
-                self.doingIt = True
-                self.startPos = sensorPosition
-
-            setpoint = self.startPos + self.offset
-            error = setpoint - sensorPosition
-
-            self.lastError = error
-            outputSpeed = self.kP * error
-
-            if outputSpeed > self.maxOutput:
-                outputSpeed = self.maxOutput
-            elif outputSpeed < -self.maxOutput:
-                outputSpeed = -self.maxOutput
-
-            self.move(outputSpeed, 0)
 
         # if self.tank:
         #     self.drive.tankDrive(self.l, self.r)
@@ -134,3 +95,90 @@ class DriveTrain:
             (self.rotation + self.extra_rotation) * self.limit,
             False,
         )
+
+
+class DrivePID:
+
+    offset = magicbot.tunable(0.0)
+    wantTo = magicbot.will_reset_to(False)
+
+    output = 0
+
+    def setup(self):
+        self.doingIt = False
+
+    def getSensor(self) -> float: ...
+
+    def doIt(self, kP, maxOutput):
+        if self.wantTo == False:
+            self.doingIt = False
+            return None
+
+        else:
+            sensorValue = self.getSensor()
+
+            if self.doingIt == False:
+                self.doingIt = True
+                self.startPos = sensorValue
+
+            setpoint = self.startPos + self.offset
+            error = setpoint - sensorValue
+
+            self.lastError = error
+            outputSpeed = kP * error
+
+            if outputSpeed > maxOutput:
+                outputSpeed = maxOutput
+            elif outputSpeed < -maxOutput:
+                outputSpeed = -maxOutput
+
+            return outputSpeed
+
+
+class NavxPID(DrivePID):
+
+    drivetrain: DriveTrain
+    navx: navx.AHRS
+
+    maxOutput = magicbot.tunable(0.5)
+    kP = magicbot.tunable(3.0)
+
+    def enable(self, v):
+        self.wantTo = True
+        self.offset = v
+
+    @magicbot.feedback
+    def isAligned(self):
+        return self.doingIt and abs(self.lastError) < 2
+
+    def getSensor(self):
+        return self.navx.getYaw()
+
+    def execute(self):
+        output = self.doIt(self.kP, self.maxOutput)
+        if output is not None:
+            self.drivetrain.rotation = output
+
+
+class EncoderPID(DrivePID):
+    drivetrain: DriveTrain
+    encoder_r: wpilib.Encoder
+
+    maxOutput = magicbot.tunable(0.5)
+    kP = magicbot.tunable(3.0)
+
+    def enable(self):
+        self.wantTo = True
+        self.offset = -0.4
+
+    @magicbot.feedback
+    def isAligned(self):
+        return self.doingIt and abs(self.lastError) < 0.05
+
+    def getSensor(self):
+        return self.encoder_r.getDistance()
+
+    def execute(self):
+        output = self.doIt(self.kP, self.maxOutput)
+        if output is not None:
+            self.drivetrain.speed = output

@@ -10,7 +10,7 @@ import math
 import magicbot
 import phoenix5
 
-# import navx
+import navx
 import rev
 from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
 from wpimath.filter import SlewRateLimiter
@@ -20,7 +20,7 @@ from misc.ejoystick import EnhancedJoystick
 # from misc.led_controller import LEDController
 
 from subsystems.climber import Climber
-from subsystems.drivetrain import DriveTrain
+from subsystems.drivetrain import DriveTrain, EncoderPID, NavxPID
 from subsystems.floorintake import FloorIntake
 from subsystems.shooter import Shooter
 from subsystems.indexer import Indexer
@@ -54,6 +54,8 @@ CLIMB_WITH_JOYSTICK = False
 
 
 class MyRobot(magicbot.MagicRobot):
+    encoder_pid: EncoderPID
+    navx_pid: NavxPID
     floorintake: FloorIntake
     drivetrain: DriveTrain
     right_climber: Climber
@@ -94,6 +96,8 @@ class MyRobot(magicbot.MagicRobot):
         self.drive_r2.setInverted(True)
 
         self.drivetrain_sensor = SharpIR2Y0A21(2)
+
+        self.navx = navx.AHRS.create_spi()
 
         ### make sure to check the numbers for the encoders are correct
         self.encoder_l = wpilib.Encoder(0, 1)
@@ -167,8 +171,8 @@ class MyRobot(magicbot.MagicRobot):
             self.shooter.shootAmp()
 
         if self.stick.getRawButton(8):
-            self.drivetrain.backAlign()
-            if self.drivetrain.isAligned():
+            self.encoder_pid.enable()
+            if self.encoder_pid.isAligned():
                 self.shooter.shoot()
 
         if self.climb_stick.getRawButton(1):

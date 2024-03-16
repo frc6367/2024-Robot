@@ -107,6 +107,8 @@ class DrivePID:
     def setup(self):
         self.doingIt = False
 
+    def getSetpoint(self) -> float: ...
+
     def getSensor(self) -> float: ...
 
     def doIt(self, kP, maxOutput):
@@ -121,8 +123,7 @@ class DrivePID:
                 self.doingIt = True
                 self.startPos = sensorValue
 
-            setpoint = self.startPos + self.offset
-            error = setpoint - sensorValue
+            error = self.getSetpoint() - sensorValue
 
             self.lastError = error
             outputSpeed = kP * error
@@ -140,8 +141,8 @@ class NavxPID(DrivePID):
     drivetrain: DriveTrain
     navx: navx.AHRS
 
-    maxOutput = magicbot.tunable(0.5)
-    kP = magicbot.tunable(3.0)
+    maxOutput = magicbot.tunable(0.3)
+    kP = magicbot.tunable(0.25)
 
     def enable(self, v):
         self.wantTo = True
@@ -149,7 +150,14 @@ class NavxPID(DrivePID):
 
     @magicbot.feedback
     def isAligned(self):
-        return self.doingIt and abs(self.lastError) < 2
+        return self.doingIt and abs(self.lastError) < 3
+
+    @magicbot.feedback
+    def yaw(self):
+        return self.navx.getYaw()
+
+    def getSetpoint(self) -> float:
+        return self.offset
 
     def getSensor(self):
         return self.navx.getYaw()
@@ -157,7 +165,7 @@ class NavxPID(DrivePID):
     def execute(self):
         output = self.doIt(self.kP, self.maxOutput)
         if output is not None:
-            self.drivetrain.rotation = output
+            self.drivetrain.rotation = -output
 
 
 class EncoderPID(DrivePID):
@@ -174,6 +182,9 @@ class EncoderPID(DrivePID):
     @magicbot.feedback
     def isAligned(self):
         return self.doingIt and abs(self.lastError) < 0.05
+
+    def getSetpoint(self) -> float:
+        return self.startPos + self.offset
 
     def getSensor(self):
         return self.encoder_r.getDistance()

@@ -138,6 +138,12 @@ class MyRobot(magicbot.MagicRobot):
         self.right_climber_sensor = wpilib.DigitalInput(4)
         self.left_climber_sensor = wpilib.DigitalInput(5)
 
+    def autonomousInit(self) -> None:
+        self.navx.reset()
+
+    def teleopInit(self) -> None:
+        self.navx.reset()
+
     def teleopPeriodic(self):
         # # Use the joystick X axis for lateral movement, Y axis for forward
         twitch = twitch_range(self.stick.getRawAxis(3))
@@ -171,12 +177,15 @@ class MyRobot(magicbot.MagicRobot):
         if self.stick.getRawButton(9):
             self.shooter.shootAmp()
 
+        if self.stick.getRawButton(7):
+            self.navx_pid.enable(60)
+
         if self.stick.getRawButton(8):
             self.encoder_pid.enable()
             if self.encoder_pid.isAligned():
                 self.shooter.shoot()
 
-        if self.climb_stick.getRawButton(1):
+        if self.climb_stick.getRawButton(2):
             if self.drivetrain.noteAlign():
                 self.floorintake.grab(True)
 

@@ -1,7 +1,7 @@
 import wpilib
 
 from magicbot import AutonomousStateMachine, timed_state, state
-from subsystems.drivetrain import DriveTrain, EncoderPID
+from subsystems.drivetrain import DriveTrain, EncoderPID, NavxPID
 from subsystems.floorintake import FloorIntake
 from subsystems.shooter import Shooter
 from subsystems.indexer import Indexer
@@ -14,6 +14,8 @@ class Middle(AutonomousStateMachine):
     DEFAULT = False
 
     encoder_pid: EncoderPID
+    navx_pid: NavxPID
+
     floorintake: FloorIntake
     drivetrain: DriveTrain
     shooter: Shooter
@@ -22,7 +24,11 @@ class Middle(AutonomousStateMachine):
     ## sensor needs to be added for robot to be the right distance away from the speaker
     ## back up first 2ft 4 in(make sure right distance with sensor), and then shoot
 
-    @timed_state(first=True, duration=1, next_state="shoot")
+    @timed_state(first=True, duration=1, next_state="initial_back")
+    def wait(self):
+        pass
+
+    @timed_state(duration=1, next_state="shoot")
     def initial_back(self):
         # self.drivetrain.move(-0.2, 0)
         self.encoder_pid.enable()

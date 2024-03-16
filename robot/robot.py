@@ -17,7 +17,7 @@ from wpimath.filter import SlewRateLimiter
 
 from misc.ejoystick import EnhancedJoystick
 
-# from misc.led_controller import LEDController
+from misc.led_controller import LEDController
 
 from subsystems.climber import Climber
 from subsystems.drivetrain import DriveTrain, EncoderPID, NavxPID
@@ -62,6 +62,7 @@ class MyRobot(magicbot.MagicRobot):
     left_climber: Climber
     shooter: Shooter
     indexer: Indexer
+    led_controller: LEDController
 
     # ##Joysticks
     # # The channel on the driver station that the joystick is connected to

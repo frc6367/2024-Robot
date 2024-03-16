@@ -2,6 +2,7 @@ import rev
 import magicbot
 
 from robotpy_ext.common_drivers.distance_sensors import SharpIR2Y0A21
+from misc.led_controller import LEDController
 
 
 class Indexer:
@@ -20,6 +21,8 @@ class Indexer:
 
 
     """
+
+    led_controller: LEDController
 
     motor: rev.CANSparkMax
 
@@ -47,10 +50,9 @@ class Indexer:
             return True
 
         return False
-    
+
     def is_lower_note_present(self):
         return self.lower_sensor.getDistance() < 20
-
 
     #
     # Actions methods
@@ -82,4 +84,7 @@ class Indexer:
     #
 
     def execute(self):
+        if self.is_note_present():
+            self.led_controller.indicateHasNote()
+
         self.motor.set(self.speed)

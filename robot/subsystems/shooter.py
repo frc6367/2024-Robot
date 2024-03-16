@@ -6,7 +6,7 @@ import phoenix5
 
 from .indexer import Indexer
 
-# from misc.led_controller import LEDController
+from misc.led_controller import LEDController
 
 
 class Action(enum.Enum):
@@ -29,6 +29,7 @@ class Shooter:
     """
 
     indexer: Indexer
+    led_controller: LEDController
 
     left_motor: phoenix5.WPI_VictorSPX
     right_motor: phoenix5.WPI_VictorSPX
@@ -83,6 +84,8 @@ class Shooter:
                 zspeed = self.source_speed
 
         elif self.action == Action.SHOOT:
+            self.led_controller.indicateShooting()
+
             zspeed = self.shoot_speed
             if not self.is_shooting:
                 self.is_shooting = True

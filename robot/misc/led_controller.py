@@ -50,16 +50,10 @@ class LEDController:
             # fade between electrolights blue/purple
             self.light.fade(0, 1)
 
-    def indicateHasCube(self):
+    def indicateHasNote(self):
         self.color = GREEN
 
-    def indicateMaybeCube(self):
-        self.color = YELLOW
-
-    def indicateAlmostCube(self):
-        self.color = YELLOWGREEN
-
-    def indicateArmUp(self):
+    def indicateShooting(self):
         self.color = RED
 
     # TODO: add robot autobalance indicators
